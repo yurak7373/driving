@@ -10,6 +10,7 @@ import {
   updateSceneState,
 } from "./scenes/sceneState";
 import { getInspectionUi } from "./ui/inspectionUi";
+import { byId } from "./ui/dom";
 
 function startInspection() {
   const ui = getInspectionUi();
@@ -79,12 +80,58 @@ function startInspection() {
     render();
   });
 
-  import.meta.hot?.dispose(() => {
+  return () => {
     disconnectInput();
     resizeObserver.disconnect();
     window.removeEventListener("resize", resize);
     inspection.dispose();
-  });
+  };
 }
 
-startInspection();
+const testScreen = byId("inspection-screen");
+const busScreen = byId("bus-screen");
+const enterBus = byId("enter-bus");
+const returnToTest = byId("return-to-test");
+const navigation = new AbortController();
+let stopScene: (() => void) | undefined;
+let current: "bus" | "test" | undefined;
+let navigationVersion = 0;
+
+function navigate() {
+  const next = location.hash === "#bus" ? "bus" : "test";
+  if (next === current) return;
+  const shouldFocus = current !== undefined;
+  const version = ++navigationVersion;
+  stopScene?.();
+  stopScene = undefined;
+  current = next;
+  testScreen.hidden = next !== "test";
+  busScreen.hidden = next !== "bus";
+  if (next === "bus") {
+    const status = byId("bus-render-status");
+    status.textContent = "3D 모델을 준비하는 중";
+    void import("./ui/busInspectionUi")
+      .then(({ startBusInspection }) => {
+        if (version === navigationVersion) stopScene = startBusInspection();
+      })
+      .catch((error: unknown) => {
+        if (version !== navigationVersion) return;
+        console.error("버스 관찰 화면 로딩 실패", error);
+        status.textContent =
+          "버스 관찰 화면을 불러오지 못했습니다. 새로고침해 주세요.";
+      });
+  } else {
+    stopScene = startInspection();
+  }
+  if (shouldFocus) {
+    (next === "bus" ? returnToTest : enterBus).focus({ preventScroll: true });
+  }
+}
+
+window.addEventListener("hashchange", navigate, { signal: navigation.signal });
+navigate();
+import.meta.hot?.dispose(() => {
+  navigation.abort();
+  navigationVersion++;
+  stopScene?.();
+});

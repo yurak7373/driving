@@ -45,3 +45,32 @@ Phase 01의 버스 모델 및 실내 제작을 시작할 수 있습니다. 사�
 수정 전 Node.js 22에서 `npm ci`, `npm run check`(Vitest 4건), `npm run test:e2e`(4건)가 통과했습니다. 수정 후 같은 검사에서 Vitest 4건 및 Playwright 8건이 통과했습니다. Playwright 8건에는 기존 4건과 모서리 회귀·배포 빌드 검사 각 2건이 포함됩니다. 모바일 실기기와 새 Codespaces의 포트 포워딩은 **NOT VERIFIED**입니다.
 
 [Phase 00 브랜치의 GitHub Actions 실행 기록](https://github.com/yurak7373/driving/actions/workflows/ci.yml?query=branch%3Aphase%2F00-development-qa)
+
+## Phase 01-A · 버스 외부 관찰
+
+| 검사 | 실제 결과 |
+| --- | --- |
+| `npm ci` | Node.js 22.23.5, 잠금 파일로 설치 성공 |
+| `npm run check` | 타입·린트·Vitest 9건·배포 빌드 통과. Vite는 공통 JavaScript 번들 크기 경고를 출력했습니다. |
+| `npm run test:e2e` | Playwright 16건 통과. 기존 표식 검사 8건과 버스 검사 8건을 데스크톱 및 모바일 Chromium 에뮬레이션에서 실행했습니다. |
+| 시각 확인 | Chromium에서 데스크톱 사선·전면·좌측, 390×900 모바일 초기 시점을 확인했습니다. 전면 LED 한글 및 차량 전체 표시를 확인했습니다. |
+| 신규 Codespace, Android·iOS 실기기, 실기기 FPS | NOT VERIFIED · 로컬 Chromium과 모바일 에뮬레이션으로 검증했습니다. |
+
+테스트는 실제 바퀴와 문·창문 노드, 도색 재질과 투영 범위, 반복 장면 전환 시 WebGL 컨텍스트 해제 및 차량 자원 처리를 확인합니다. 배포 환경의 버스 진입 및 한글 글꼴 로드도 검증했습니다. [Phase 01-A GitHub Actions](https://github.com/yurak7373/driving/actions/workflows/ci.yml?query=branch%3Aphase%2F01-a-bus-exterior)
+
+## PHASE 01-A 독립 감사 보완
+
+비교 기준은 감사 커밋 `b0450325cc0d350da3923522bacada652b0e0389`입니다.
+
+| 항목 | 상태 | 검증 결과와 후속 작업 |
+| --- | --- | --- |
+| A-01 실제 좌우 | FIXED | 진행 +Z, 위 +Y에서 오른쪽 −X를 구합니다. 운전석 X −0.74 → +0.74m, 운전자 카메라 −0.74 → +0.74m, 두 문 +1.218 → −1.218m입니다. 승하차 기준점, 바퀴·미러·조명, 좌우 프리셋과 비대칭 외장을 같은 기준으로 검증했습니다. |
+| A-02 타이어 간섭 | FIXED | 기존 전륜 Y 0.61m·Z 3.10m 단면의 바닥 겹침 약 0.22m를 제거했습니다. 다섯 조향 각도에서 바닥·덮개·휠아치·측면 패널·문틀·관련 하부 부품과 타이어 단면 겹침이 검출되지 않았습니다. 전륜 Y 0.91m와 후륜 복륜도 검사했습니다. |
+| A-03 낮은 가로 화면 | FIXED | 900×390에서 첫 화면 차량 경계 하단이 Y 509px에서 약 Y 357px로 이동했습니다. 390×900, 340×780, 1440×900에서도 첫 화면 차량 전체를 검증했습니다. |
+| A-04 차량 교체 연동 | DEFERRED | PHASE 01-B에서 크기·원점이 다른 모델 교체를 연결할 때 활성 모델, 카메라, 정보·도색·기준점과 자원 해제를 검증합니다. |
+| A-05 초기화 실패 시 정리 | DEFERRED | PHASE 01-B에서 부분 초기화의 자원 정리와 실패 후 표식 장면 복귀를 검증합니다. |
+| A-06 반복 부품 렌더링 비용 | DEFERRED | PHASE 01-B에서 실내 반복 부품을 추가할 때 실기기 측정과 인스턴싱을 검토합니다. 감사 기준 Draw Calls 399, 삼각형 42,044, 렌더러 Geometry 171, Texture 3, 광원 3입니다. |
+
+Node.js 22.23.5에서 `npm ci`, `npm run check`(Vitest 15건), `CI=1 npm run test:e2e`(Playwright 18건)를 실행했습니다. 기존 표식·장면 반복 전환·배포 검사가 포함됩니다. Vite 공통 번들 크기 경고는 유지됩니다. 임시 복사본에서 운전석 반대 배치, 연속 바닥 복원, 가로 높이 보정 제거가 각각 신규 검사에 의해 검출됐습니다.
+
+Chromium으로 요청된 시점 11개를 캡처했습니다. 운전석과 하부 단면은 실제 모델을 별도 검수 카메라와 클리핑 평면으로 렌더링했습니다. 신규 Codespaces, Android·iOS 실기기, 실기기 FPS, 현가장치 작동 중 간섭 및 27석의 실제 배치는 **NOT VERIFIED**입니다. [자동 검사 이력](https://github.com/yurak7373/driving/actions/workflows/ci.yml?query=branch%3Aphase%2F01-a-bus-exterior)

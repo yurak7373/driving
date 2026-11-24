@@ -79,6 +79,7 @@ export function createInspectionScene(canvas: HTMLCanvasElement) {
       body.material.dispose();
       base.geometry.dispose();
       base.material.dispose();
+      renderer.forceContextLoss();
     },
   };
 }

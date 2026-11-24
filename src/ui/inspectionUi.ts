@@ -1,14 +1,10 @@
 import type { SceneState } from "../scenes/sceneState";
 
-function byId<T extends HTMLElement>(id: string) {
-  const element = document.getElementById(id);
-  if (!element) throw new Error(`필수 화면 요소가 없습니다: ${id}`);
-  return element as T;
-}
+import { byId, renewCanvas } from "./dom";
 
 export function getInspectionUi() {
   const viewport = byId("viewport");
-  const canvas = byId<HTMLCanvasElement>("scene");
+  const canvas = renewCanvas("scene");
   const controls = byId("controls");
   const status = byId("render-status");
   const view = byId("view-label");
