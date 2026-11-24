@@ -1,0 +1,55 @@
+name: Phase 00 검수
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, "phase/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: 코드, 빌드 및 브라우저 검수
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: 소스 가져오기
+        uses: actions/checkout@v5
+      - name: Node.js 설정
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+      - name: 의존성 설치
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+          fi
+      - name: 초기 잠금 파일 저장
+        if: hashFiles('package-lock.json') != ''
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from "node:fs";
+          import { gzipSync } from "node:zlib";
+          const encoded = gzipSync(readFileSync("package-lock.json")).toString("base64");
+          for (const part of encoded.match(/.{1,3000}/g)) console.log("PHASE_LOCK " + part);
+          NODE
+      - name: 타입 검사, 린트, 단위·통합 테스트 및 빌드
+        run: npm run check
+      - name: Playwright Chromium 및 시스템 패키지 설치
+        run: npx playwright install --with-deps chromium
+      - name: 개발 서버 및 브라우저 테스트
+        run: npm run test:e2e
+      - name: Playwright 결과 보관
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
