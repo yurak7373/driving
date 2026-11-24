@@ -45,3 +45,15 @@ Phase 01의 버스 모델 및 실내 제작을 시작할 수 있습니다. 사�
 수정 전 Node.js 22에서 `npm ci`, `npm run check`(Vitest 4건), `npm run test:e2e`(4건)가 통과했습니다. 수정 후 같은 검사에서 Vitest 4건 및 Playwright 8건이 통과했습니다. Playwright 8건에는 기존 4건과 모서리 회귀·배포 빌드 검사 각 2건이 포함됩니다. 모바일 실기기와 새 Codespaces의 포트 포워딩은 **NOT VERIFIED**입니다.
 
 [Phase 00 브랜치의 GitHub Actions 실행 기록](https://github.com/yurak7373/driving/actions/workflows/ci.yml?query=branch%3Aphase%2F00-development-qa)
+
+## Phase 01-A · 버스 외부 관찰
+
+| 검사 | 실제 결과 |
+| --- | --- |
+| `npm ci` | Node.js 22.23.5, 잠금 파일로 설치 성공 |
+| `npm run check` | 타입·린트·Vitest 9건·배포 빌드 통과. Vite는 공통 JavaScript 번들 크기 경고를 출력했습니다. |
+| `npm run test:e2e` | Playwright 16건 통과. 기존 표식 검사 8건과 버스 검사 8건을 데스크톱 및 모바일 Chromium 에뮬레이션에서 실행했습니다. |
+| 시각 확인 | Chromium에서 데스크톱 사선·전면·좌측, 390×900 모바일 초기 시점을 확인했습니다. 전면 LED 한글 및 차량 전체 표시를 확인했습니다. |
+| 신규 Codespace, Android·iOS 실기기, 실기기 FPS | NOT VERIFIED · 로컬 Chromium과 모바일 에뮬레이션으로 검증했습니다. |
+
+테스트는 실제 바퀴와 문·창문 노드, 도색 재질과 투영 범위, 반복 장면 전환 시 WebGL 컨텍스트 해제 및 차량 자원 처리를 확인합니다. 배포 환경의 버스 진입 및 한글 글꼴 로드도 검증했습니다. [Phase 01-A GitHub Actions](https://github.com/yurak7373/driving/actions/workflows/ci.yml?query=branch%3Aphase%2F01-a-bus-exterior)

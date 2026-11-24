@@ -7,36 +7,206 @@
     <title>3D 테스트 장면 | 시내버스 시뮬레이터</title>
   </head>
   <body>
-    <main class="layout">
+    <main class="layout" id="inspection-screen">
       <header class="page-header">
         <p class="project">시내버스 시뮬레이터</p>
         <h1>3D 테스트 장면</h1>
+        <a id="enter-bus" class="bus-entry" href="#bus"
+          >버스 외부 살펴보기 <span aria-hidden="true">↗</span></a
+        >
       </header>
       <div class="workspace">
         <section id="viewport" class="viewport" aria-label="3D 테스트 뷰포트">
           <canvas id="scene" role="img" aria-label="시험 구역의 3D 뷰"></canvas>
-          <span id="render-status" class="render-status" role="status">3D 장면을 준비하는 중</span>
+          <span id="render-status" class="render-status" role="status"
+            >3D 장면을 준비하는 중</span
+          >
         </section>
-        <section id="controls" class="controls" aria-labelledby="controls-title">
+        <section
+          id="controls"
+          class="controls"
+          aria-labelledby="controls-title"
+        >
           <h2 id="controls-title">장면 조작</h2>
           <p class="hint">방향키 또는 WASD로 표식을 이동합니다.</p>
           <div class="directions" role="group" aria-label="이동">
-            <button class="forward" type="button" data-action="forward" aria-label="앞으로">↑</button>
-            <button class="left" type="button" data-action="left" aria-label="왼쪽으로">←</button>
-            <button class="back" type="button" data-action="back" aria-label="뒤로">↓</button>
-            <button class="right" type="button" data-action="right" aria-label="오른쪽으로">→</button>
+            <button
+              class="forward"
+              type="button"
+              data-action="forward"
+              aria-label="앞으로"
+            >
+              ↑
+            </button>
+            <button
+              class="left"
+              type="button"
+              data-action="left"
+              aria-label="왼쪽으로"
+            >
+              ←
+            </button>
+            <button
+              class="back"
+              type="button"
+              data-action="back"
+              aria-label="뒤로"
+            >
+              ↓
+            </button>
+            <button
+              class="right"
+              type="button"
+              data-action="right"
+              aria-label="오른쪽으로"
+            >
+              →
+            </button>
           </div>
           <div class="view-actions">
-            <button type="button" data-action="camera" aria-keyshortcuts="C">시점 전환 <kbd>C</kbd></button>
+            <button type="button" data-action="camera" aria-keyshortcuts="C">
+              시점 전환 <kbd>C</kbd>
+            </button>
             <button type="button" data-action="reset">초기화</button>
           </div>
           <dl class="readout">
-            <div><dt>시점</dt><dd id="view-label">사선</dd></div>
-            <div><dt>표식 좌표 X / Z</dt><dd id="coordinates">0 / 0</dd></div>
+            <div>
+              <dt>시점</dt>
+              <dd id="view-label">사선</dd>
+            </div>
+            <div>
+              <dt>표식 좌표 X / Z</dt>
+              <dd id="coordinates">0 / 0</dd>
+            </div>
           </dl>
         </section>
       </div>
       <noscript>이 테스트 장면을 실행하려면 자바스크립트를 켜세요.</noscript>
+    </main>
+    <main class="bus-screen" id="bus-screen" hidden>
+      <header class="bus-header">
+        <div>
+          <p class="bus-kicker">시내버스 시뮬레이터 · 외부 모델 검수</p>
+          <h1>버스 외부 관찰</h1>
+        </div>
+        <a class="bus-back" id="return-to-test" href="#test"
+          ><span aria-hidden="true">←</span> 표식 시험 장면</a
+        >
+      </header>
+      <div class="bus-workspace">
+        <section
+          id="bus-viewport"
+          class="bus-stage"
+          aria-label="버스 관찰 뷰포트"
+        >
+          <canvas
+            id="bus-canvas"
+            role="img"
+            aria-label="한국형 시내버스 외부 3D 모델"
+          ></canvas>
+          <span id="bus-render-status" class="bus-stage-status" role="status"
+            >3D 모델을 준비하는 중</span
+          >
+          <p class="bus-stage-route" aria-label="101번, 해안공원">
+            <b>101</b> 해안공원
+          </p>
+          <p class="bus-stage-help">
+            드래그하여 회전 · 휠 또는 두 손가락으로 확대
+          </p>
+        </section>
+        <aside id="bus-controls" class="bus-rail" aria-labelledby="bus-options">
+          <h2 id="bus-options">관찰 설정</h2>
+          <div class="bus-card">
+            <div class="bus-card-heading">
+              <h3>카메라</h3>
+              <span id="bus-view">사선</span>
+            </div>
+            <div class="bus-presets" role="group" aria-label="카메라 시점">
+              <button
+                type="button"
+                data-bus-view="diagonal"
+                aria-pressed="true"
+              >
+                사선
+              </button>
+              <button type="button" data-bus-view="front" aria-pressed="false">
+                전면
+              </button>
+              <button type="button" data-bus-view="rear" aria-pressed="false">
+                후면
+              </button>
+              <button type="button" data-bus-view="left" aria-pressed="false">
+                좌측
+              </button>
+              <button type="button" data-bus-view="right" aria-pressed="false">
+                우측
+              </button>
+              <button type="button" data-bus-view="top" aria-pressed="false">
+                상단
+              </button>
+            </div>
+            <div class="bus-zoom" role="group" aria-label="확대와 초기화">
+              <button type="button" data-zoom="0.84" aria-label="확대">
+                +
+              </button>
+              <button type="button" data-zoom="1.19" aria-label="축소">
+                −
+              </button>
+              <button type="button" data-bus-view="diagonal">기본 시점</button>
+            </div>
+          </div>
+          <div class="bus-card">
+            <h3><label for="bus-livery">차체 도색</label></h3>
+            <select id="bus-livery">
+              <option value="green">녹색</option>
+              <option value="blue">파란색</option>
+              <option value="red">빨간색</option>
+              <option value="yellow">노란색</option>
+            </select>
+          </div>
+          <div class="bus-card">
+            <h3>바퀴 시각 검수</h3>
+            <div class="bus-range">
+              <label for="bus-steering">전륜 조향</label
+              ><output id="bus-steering-value" for="bus-steering">0°</output>
+            </div>
+            <input
+              id="bus-steering"
+              type="range"
+              min="-23"
+              max="23"
+              value="0"
+            />
+            <div class="bus-range">
+              <label for="bus-roll">바퀴 회전</label
+              ><output id="bus-roll-value" for="bus-roll">0°</output>
+            </div>
+            <input id="bus-roll" type="range" min="0" max="360" value="0" />
+          </div>
+          <div class="bus-card bus-spec">
+            <h3 id="bus-name">차량 제원</h3>
+            <dl>
+              <div>
+                <dt>전장 × 전폭 × 전고</dt>
+                <dd id="bus-dimensions"></dd>
+              </div>
+              <div>
+                <dt>축간거리</dt>
+                <dd id="bus-wheelbase"></dd>
+              </div>
+              <div>
+                <dt>바퀴</dt>
+                <dd id="bus-wheels"></dd>
+              </div>
+              <div>
+                <dt>출입문</dt>
+                <dd id="bus-doors"></dd>
+              </div>
+            </dl>
+            <p id="bus-parts"></p>
+          </div>
+        </aside>
+      </div>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
