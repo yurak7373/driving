@@ -27,8 +27,8 @@ jobs:
         run: npm ci
       - name: 타입 검사, 린트, 단위·통합 테스트 및 빌드
         run: npm run check
-      - name: Playwright Chromium 설치
-        run: npx playwright install chromium --only-shell
+      - name: Playwright Chromium 및 Linux 라이브러리 설치
+        run: npm run test:e2e:install:linux
       - name: 개발 서버 및 브라우저 테스트
         run: npm run test:e2e
       - name: Playwright 결과 보관

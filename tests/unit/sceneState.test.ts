@@ -1,11 +1,21 @@
 import { describe, expect, it } from "vitest";
 import { actionForKey } from "../../src/input/sceneInput";
-import { initialSceneState, sceneBounds, updateSceneState } from "../../src/scenes/sceneState";
+import {
+  initialSceneState,
+  sceneBounds,
+  updateSceneState,
+} from "../../src/scenes/sceneState";
 
 describe("입력과 테스트 장면 상태", () => {
   it("방향키와 WASD를 같은 동작으로 변환하고 지원하지 않는 키를 무시한다", () => {
-    expect(actionForKey("ArrowLeft")).toBe(actionForKey("KeyA"));
+    expect(actionForKey("ArrowLeft")).toBe("left");
+    expect(actionForKey("KeyA")).toBe("left");
+    expect(actionForKey("ArrowRight")).toBe("right");
+    expect(actionForKey("KeyD")).toBe("right");
+    expect(actionForKey("ArrowUp")).toBe("forward");
     expect(actionForKey("KeyW")).toBe("forward");
+    expect(actionForKey("ArrowDown")).toBe("back");
+    expect(actionForKey("KeyS")).toBe("back");
     expect(actionForKey("KeyC")).toBe("camera");
     expect(actionForKey("KeyP")).toBeUndefined();
   });

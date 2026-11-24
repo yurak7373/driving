@@ -9,5 +9,6 @@
       "requireLocalPort": true
     }
   },
-  "postCreateCommand": "npm ci"
+  "remoteUser": "node",
+  "postCreateCommand": "npm ci && npm run test:e2e:install:linux"
 }

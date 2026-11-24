@@ -4,22 +4,27 @@
 
 Node.js 22.13 이상에서 의존성을 설치하고 `npm run check`를 실행합니다. 타입 검사 → 린트 → Vitest 단위·통합 테스트 → 배포 빌드 순서이며, 단계 하나가 실패하면 명령도 실패합니다.
 
-별도로 Chromium을 설치한 뒤 브라우저 테스트를 실행합니다.
+Codespaces는 새 컨테이너 생성 및 재구축 시 `npm ci`와 `npm run test:e2e:install:linux`를 차례로 실행합니다. 설치 명령은 Chromium 헤드리스 셸과 Linux 시스템 라이브러리를 준비합니다. 컨테이너에서 `node` 사용자로 실행하므로 브라우저 캐시를 테스트와 공유합니다. 시스템 라이브러리 설치에 필요한 권한은 Playwright가 `sudo`로 얻습니다. GitHub Actions도 동일한 Linux 설치 명령을 사용합니다.
+
+로컬에서 처음 검수하려면 운영체제에 맞는 설치 명령을 실행합니다.
 
 ```sh
-npx playwright install chromium
+npm ci
+npm run test:e2e:install:linux  # Linux
+# npm run test:e2e:install     # macOS 또는 Windows
+npm run check
 npm run test:e2e
 ```
 
-Linux에서 브라우저 실행에 필요한 시스템 패키지가 부족하면 `npx playwright install --with-deps chromium`을 실행합니다. 시스템 패키지 설치 권한이 없으면 GitHub Actions에서 브라우저 검사를 확인합니다.
+Playwright는 현재 작업 디렉터리의 개발 서버를 5174에, 새 Vite 빌드의 미리보기 서버를 4174에 실행합니다. 포트가 사용 중이면 오류에 해당 주소가 표시됩니다. 자신이 실행한 서버라면 그 서버 터미널에서 Ctrl+C로 종료한 뒤 다시 실행하세요. 일반 개발용 5173은 계속 사용할 수 있습니다.
 
-Playwright는 로컬의 5173 포트에서 개발 서버를 실행합니다. 수동으로 실행 중인 서버를 재사용할 수 있습니다. 다른 프로그램이 5173을 사용 중이면 종료한 뒤 다시 시도합니다. GitHub Actions는 새 서버를 실행하고 실패 시 스크린샷과 추적 파일을 보관합니다.
+현재 작업 브랜치로 5174에 직접 실행한 개발 서버를 재사용하려면 로컬 셸에서 `PLAYWRIGHT_REUSE_DEV_SERVER=1 npm run test:e2e`를 실행합니다. 배포 빌드 미리보기와 CI는 항상 새 서버를 사용합니다. CI는 실패 시 스크린샷과 추적 파일을 보관합니다.
 
 | 검수 | 관찰 항목 |
 | --- | --- |
-| 단위 | 키 매핑, 좌표 한계, 종횡비와 화면 픽셀 비율 |
+| 단위 | WASD·방향키 각각의 키 매핑, 좌표 한계, 종횡비와 화면 픽셀 비율 |
 | 통합 | 입력 → 상태 변경 → Three.js 카메라 적용 및 초기화 |
-| 브라우저 | 개발 서버 HTTP 응답, 실제 WebGL 렌더 호출, 크기 변경, PC 키보드와 모바일 터치 |
+| 브라우저 | 개발 서버 HTTP 응답, WebGL 렌더 호출, 실제 카메라 방향, PC 키보드와 모바일 터치, 두 시점에서 네 모서리의 표식 투영 범위와 화면 회전 뒤 상태 유지, 배포 번들 로드 및 조작 |
 | 수동 | Codespaces 포트, 실제 PC와 스마트폰 화면 및 터치 |
 
 ## 수동 검수
