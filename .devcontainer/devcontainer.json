@@ -1,0 +1,14 @@
+{
+  "name": "Driving Phase 00",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "forwardPorts": [5173],
+  "portsAttributes": {
+    "5173": {
+      "label": "3D 테스트 장면",
+      "onAutoForward": "notify",
+      "requireLocalPort": true
+    }
+  },
+  "remoteUser": "node",
+  "postCreateCommand": "npm ci && npm run test:e2e:install:linux"
+}
