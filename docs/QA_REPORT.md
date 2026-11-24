@@ -1,6 +1,20 @@
 # Phase 00 검수 보고서
 
-**판정 · CONDITIONAL PASS**
+**최종 판정 · PASS**
+
+## 최종 검수 · 2026-11-24
+
+검수 대상은 `15eb6498cb52709c8d33b4d2415d8c88dc37fdb6`입니다. PR #1이 병합된 `main` 커밋 `baf82bf`의 파일 내용은 검수 대상과 일치합니다.
+
+- 사용자 검수에서 최신 코드를 가져와 기존 Codespaces 컨테이너를 재구축했습니다. Chromium과 Linux 라이브러리가 자동 설치됐고 `npm run check`와 `npm run test:e2e`가 통과했습니다.
+- 사용자가 기존 수동 검수 13/13건과 추가 수동 검수 8/8건을 모두 통과했다고 보고했습니다.
+- 독립 감사의 HIGH 2건을 해결했습니다. 모바일 390 × 900에서 `-4 / 6`을 포함한 네 모서리의 표식을 두 시점에서 확인했고, 기존 Codespaces 재구축으로 자동 설치를 확인했습니다.
+- 검수 대상 커밋의 GitHub Actions에서 Playwright 8건이 통과했습니다. [브랜치 검사](https://github.com/yurak7373/driving/actions/runs/45347766840) · [PR 검사](https://github.com/yurak7373/driving/actions/runs/45347772760)
+- **NOT VERIFIED** · 신규 Codespace 생성 및 최초 초기화, 신규 환경의 5173 포트 포워딩, 실제 Android·iOS 기기 검수.
+
+## 초기 검수 기록
+
+**당시 판정 · CONDITIONAL PASS**
 
 2026-11-24에 GitHub Actions의 Ubuntu 24.04와 Node.js 22.23.5에서 아래 검사를 실행했습니다. [검수 실행 로그](https://github.com/yurak7373/driving/actions/runs/45340403879)
 
@@ -25,18 +39,18 @@
 
 ## 다음 단계
 
-Phase 01의 버스 모델 및 실내 제작을 시작할 수 있습니다. 사용자 Codespaces의 5173 포워딩과 실제 모바일 기기 조작은 [수동 검수 절차](TESTING.md)에 따라 확인이 필요합니다. 차량 조작, 차량 물리, 디버그 도구는 후속 단계 범위입니다.
+Phase 01의 버스 모델 및 실내 제작을 시작할 수 있습니다. 신규 Codespace의 5173 포워딩과 실제 모바일 기기 조작은 [수동 검수 절차](TESTING.md)에 따라 확인이 필요합니다. 차량 조작, 차량 물리, 디버그 도구는 후속 단계 범위입니다.
 
 [현재 브랜치 검수 이력](https://github.com/yurak7373/driving/actions/workflows/ci.yml?query=branch%3Aphase%2F00-development-qa)
 
 ## 독립 감사 후 Phase 00 보완
 
-**판정 · CONDITIONAL PASS**
+**당시 판정 · CONDITIONAL PASS**
 
 | 독립 감사 항목 | 상태 | 조치와 근거 |
 | --- | --- | --- |
 | 모바일 모서리에서 표식 화면 이탈 | FIXED | 390 × 900에서 사라졌던 `-4 / 6`을 포함해 네 모서리의 표식 전체 투영 범위를 확인합니다. PC 가로 화면, 모바일 세로·가로 화면, 사선·상단 시점을 검사합니다. |
-| Codespaces Chromium 및 Linux 라이브러리 자동 준비 | NOT VERIFIED | 초기화와 CI에 Linux 설치 명령을 연결했습니다. 실제 신규 Codespaces 초기화와 재구축은 미실행입니다. 별도 Docker 실행도 이미지 레이어 저장 공간 부족으로 시작하지 못했습니다. |
+| Codespaces Chromium 및 Linux 라이브러리 자동 준비 | FIXED | 사용자 검수에서 기존 Codespace 재구축 시 자동 설치와 Playwright 통과를 확인했습니다. 신규 Codespace 최초 초기화는 미검증입니다. |
 | 화면 경계·키 매핑·카메라·배포 산출물 검사 공백 | FIXED | 각 키의 기대 방향, 실제 카메라의 방향, 표식 전체 투영 및 WebGL 렌더, 배포 번들 로드와 조작을 검사합니다. |
 | 지속 조작 및 복수 입력 합성 | DEFERRED | Phase 02~03. 실제 차량 제어를 도입할 때 지속 입력, 장치별 합성, 포커스 상실 처리를 구현합니다. |
 | 장면 및 차량 모델 수명 관리 | DEFERRED | Phase 01. 차량 모델을 연결할 때 장면·차량 교체와 자원 소유권·해제를 정의합니다. 반복 교체를 위한 확장 준비입니다. |
