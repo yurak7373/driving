@@ -1,4 +1,6 @@
 import { ExtrudeGeometry, Group, Mesh, PlaneGeometry, Shape } from "three";
+import { busSides } from "./busAxes";
+import { wheelOpening } from "./busUnderbody";
 import { busConfig, frontAxleZ, rearAxleZ } from "./busConfig";
 import type { BusMaterials } from "./busMaterials";
 import type { BusParts } from "./busParts";
@@ -9,11 +11,10 @@ const middleDoor = [-1.37, 0.05] as const;
 
 export function addBusSides(root: Group, parts: BusParts, m: BusMaterials) {
   const halfWidth = busConfig.width / 2;
-  const wheelOpening = 0.59;
 
-  for (const side of [-1, 1]) {
+  for (const [side, label] of busSides) {
     const wall = new Group();
-    wall.name = side === 1 ? "RightBody" : "LeftBody";
+    wall.name = label === "R" ? "RightBody" : "LeftBody";
     root.add(wall);
     const shellX = side * (halfWidth - 0.04);
     const outlineX = side * (halfWidth - 0.014);
@@ -117,7 +118,7 @@ export function addBusSides(root: Group, parts: BusParts, m: BusMaterials) {
       );
     }
 
-    if (side === -1) {
+    if (label === "L") {
       wheelPanel([rearAxleZ, frontAxleZ], -sideEnd, sideEnd);
       const stops = [-sideEnd, -3.68, -2.04, -0.4, 1.24, 2.88, 4.04, sideEnd];
       for (let i = 0; i < stops.length - 1; i++) {
@@ -157,10 +158,10 @@ export function addBusSides(root: Group, parts: BusParts, m: BusMaterials) {
       );
       parts.box(
         wall,
-        "SideIndicator",
+        "SideIndicator_R",
         m.amber,
         [0.027, 0.091, 0.22],
-        [halfWidth, 1.2, 2.16],
+        [side * halfWidth, 1.2, 2.16],
         0.01,
       );
     }
@@ -171,7 +172,7 @@ export function addBusSides(root: Group, parts: BusParts, m: BusMaterials) {
       "AccessPanelSeam",
       m.dark,
       [0.014, 0.49, 1.28],
-      [detailX, 0.88, side === 1 ? 1.25 : 0.2],
+      [detailX, 0.88, label === "R" ? 1.25 : 0.2],
       0.007,
     );
     parts.box(
@@ -179,7 +180,7 @@ export function addBusSides(root: Group, parts: BusParts, m: BusMaterials) {
       "AccessPanel",
       m.paint,
       [0.014, 0.45, 1.24],
-      [detailX + side * 0.009, 0.88, side === 1 ? 1.25 : 0.2],
+      [detailX + side * 0.009, 0.88, label === "R" ? 1.25 : 0.2],
       0.007,
     );
     parts.box(
@@ -187,7 +188,7 @@ export function addBusSides(root: Group, parts: BusParts, m: BusMaterials) {
       "AccessLatch",
       m.dark,
       [0.016, 0.035, 0.17],
-      [detailX + side * 0.022, 1.01, side === 1 ? 1.25 : 0.2],
+      [detailX + side * 0.022, 1.01, label === "R" ? 1.25 : 0.2],
     );
     parts.box(
       wall,
@@ -210,7 +211,7 @@ export function addBusSides(root: Group, parts: BusParts, m: BusMaterials) {
     function addDoor(name: string, [start, end]: readonly [number, number]) {
       const door = new Group();
       door.name = name;
-      door.position.set(halfWidth - 0.032, 0.45, (start + end) / 2);
+      door.position.set(side * (halfWidth - 0.032), 0.45, (start + end) / 2);
       wall.add(door);
       const width = end - start;
       for (const sign of [-1, 1]) {
@@ -263,7 +264,7 @@ export function addBusSides(root: Group, parts: BusParts, m: BusMaterials) {
         );
         doorGlass.name = "DoorGlass";
         doorGlass.rotation.y = Math.PI / 2;
-        doorGlass.position.set(0.005, 1.45, leafCenter);
+        doorGlass.position.set(side * 0.005, 1.45, leafCenter);
         leaf.add(doorGlass);
       }
       parts.box(
@@ -271,7 +272,7 @@ export function addBusSides(root: Group, parts: BusParts, m: BusMaterials) {
         "DoorSill",
         m.alloy,
         [0.22, 0.075, width],
-        [-0.052, 0.02, 0],
+        [-side * 0.052, 0.02, 0],
       );
       parts.box(
         door,

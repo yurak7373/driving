@@ -8,6 +8,11 @@ export const busConfig = {
   rearOverhang: 3.1,
   tireRadius: 0.48,
   tireWidth: 0.23,
+  tireSidewallBulge: 0.033,
+  outerWheelInset: 0.19,
+  dualWheelGap: 0.075,
+  visualSteeringDegrees: 23,
+  wheelClearance: 0.04,
   wheelCount: 6,
 } as const;
 

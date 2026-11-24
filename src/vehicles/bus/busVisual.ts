@@ -1,4 +1,6 @@
 import { Group, Object3D } from "three";
+import { busSideX } from "./busAxes";
+import { wheelBays, floorTop, tubTop } from "./busUnderbody";
 import { getMeshResources } from "../../core/modelResources";
 import {
   frontZ,
@@ -34,21 +36,25 @@ export function createBusVisual(decals: BusDecals = {}) {
   addBusExterior(exterior, parts, m, decals);
 
   const interiorAnchors = {
-    DriverSeat: [-0.74, 0.82, frontZ - 1.07],
-    Dashboard: [-0.68, 1.28, frontZ - 0.72],
-    SteeringWheel: [-0.7, 1.39, frontZ - 0.91],
-    Boarding: [0.98, 0.65, 4.42],
-    Alighting: [0.98, 0.65, -0.66],
-    Aisle: [0, 0.69, 0],
-    PassengerSeatZone: [-0.76, 0.69, 0.25],
+    DriverSeat: [busSideX.left * 0.74, 0.82, frontZ - 1.07],
+    Dashboard: [busSideX.left * 0.68, 1.28, frontZ - 0.72],
+    SteeringWheel: [busSideX.left * 0.7, 1.39, frontZ - 0.91],
+    Boarding: [busSideX.right * 0.98, floorTop, 4.42],
+    Alighting: [busSideX.right * 0.98, floorTop, -0.66],
+    Aisle: [0, floorTop, 0],
+    PassengerSeatZone: [busSideX.left * 0.76, floorTop, 0.25],
+    FrontWheelSeatBase: [busSideX.left * 0.95, tubTop, wheelBays[1].z],
+    RearWheelSeatBase: [busSideX.left * 0.9, tubTop, wheelBays[0].z],
+    FrontWheelFootwell: [busSideX.left * 0.53, floorTop, wheelBays[1].z],
+    RearWheelFootwell: [busSideX.left * 0.48, floorTop, wheelBays[0].z],
     GrabRail: [0, 2.37, 0],
     InteriorLight: [0, 2.78, 0.1],
   } as const;
   const cameraAnchors = {
-    DriverCamera: [-0.74, 1.77, frontZ - 1.21],
-    PassengerCamera: [-0.35, 1.71, -3.24],
-    MirrorCamera_L: [-1.51, 2.41, 5.08],
-    MirrorCamera_R: [1.51, 2.41, 5.08],
+    DriverCamera: [busSideX.left * 0.74, 1.77, frontZ - 1.21],
+    PassengerCamera: [busSideX.left * 0.35, 1.71, -3.24],
+    MirrorCamera_L: [busSideX.left * 1.51, 2.41, 5.08],
+    MirrorCamera_R: [busSideX.right * 1.51, 2.41, 5.08],
     RearCamera: [0, 2.43, rearZ + 0.09],
   } as const;
   addAnchors("InteriorAnchors", interiorAnchors);

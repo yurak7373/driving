@@ -8,7 +8,9 @@ import {
   type Material,
   type Texture,
 } from "three";
-import { busConfig, frontAxleZ, frontZ, rearAxleZ, rearZ } from "./busConfig";
+import { busSides } from "./busAxes";
+import { busConfig, frontZ, rearZ } from "./busConfig";
+import { addBusFloor } from "./busUnderbody";
 import type { BusMaterials } from "./busMaterials";
 import type { BusParts } from "./busParts";
 
@@ -27,7 +29,7 @@ export function addBusExterior(
   const { length, width, height } = busConfig;
   const half = width / 2;
   const add = parts.box;
-  add(root, "Floor", m.floor, [2.33, 0.115, 10.53], [0, 0.61, 0], 0.04);
+  addBusFloor(root, parts, m);
   add(root, "Underframe", m.dark, [1.06, 0.28, 10.36], [0, 0.4, 0], 0.07);
   add(
     root,
@@ -37,18 +39,6 @@ export function addBusExterior(
     [0, 0.78, -4.52],
     0.08,
   );
-  for (const z of [frontAxleZ, rearAxleZ]) {
-    for (const side of [-1, 1]) {
-      add(
-        root,
-        "WheelTub",
-        m.floor,
-        [0.65, 0.42, 1.05],
-        [side * 0.875, 0.86, z],
-        0.12,
-      );
-    }
-  }
 
   add(
     root,
@@ -284,9 +274,10 @@ export function addBusExterior(
       );
     }
 
-    for (const side of [-1, 1]) {
+    for (const [worldSide, label] of busSides) {
+      const side = worldSide * sign;
       const lamp = new Group();
-      lamp.name = `${name}Lights_${side < 0 ? "L" : "R"}`;
+      lamp.name = `${name}Lights_${label}`;
       lamp.position.set(
         side * (front ? 0.884 : 0.953),
         front ? 0.96 : 1.61,
@@ -340,25 +331,31 @@ export function addBusExterior(
     }
   }
 
-  for (const [side, key] of [
-    [-1, "L"],
-    [1, "R"],
-  ] as const) {
+  for (const [side, key] of busSides) {
     const signage = new Group();
     signage.name = `SideSignage_${key}`;
     signage.position.x = side * half;
     signage.rotation.y = (side * Math.PI) / 2;
     root.add(signage);
-    if (side > 0) {
+    if (key === "R") {
       add(
         signage,
         "SideDestinationCase",
         m.dark,
         [1.05, 0.23, 0.055],
-        [-1.1, 2.505, -0.021],
+        [-side * 1.1, 2.505, -0.021],
         0.024,
       );
-      decal(signage, "SideDestination", led, 0.965, 0.166, -1.1, 2.505, 0.009);
+      decal(
+        signage,
+        "SideDestination",
+        led,
+        0.965,
+        0.166,
+        -side * 1.1,
+        2.505,
+        0.009,
+      );
     }
     if (decals.fleet)
       decal(
@@ -373,10 +370,7 @@ export function addBusExterior(
       );
   }
 
-  for (const [side, key] of [
-    [-1, "L"],
-    [1, "R"],
-  ] as const) {
+  for (const [side, key] of busSides) {
     const mirror = new Group();
     mirror.name = `Mirror_${key}`;
     mirror.position.set(side * 1.15, 2.53, 5.13);
@@ -415,13 +409,10 @@ export function addBusExterior(
       0.008,
     );
   }
-  for (const [x, name] of [
-    [-0.59, "Wiper_L"],
-    [0.59, "Wiper_R"],
-  ] as const) {
+  for (const [side, label] of busSides) {
     const pivot = new Group();
-    pivot.name = name;
-    pivot.position.set(x, 1.59, 5.47);
+    pivot.name = `Wiper_${label}`;
+    pivot.position.set(side * 0.59, 1.59, 5.47);
     // Lean the arms with the glass, then offset each blade along the windshield.
     pivot.rotation.x = -0.13;
     pivot.rotation.z = -0.56;

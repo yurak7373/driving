@@ -45,8 +45,8 @@ test("버스가 좁은 화면에도 표시되고 실제 카메라, 재질, 바�
   for (const [name, axis, sign] of [
     ["전면", 2, -1],
     ["후면", 2, 1],
-    ["좌측", 0, 1],
-    ["우측", 0, -1],
+    ["좌측", 0, -1],
+    ["우측", 0, 1],
     ["상단", 1, -1],
   ] as const) {
     await page.getByRole("button", { name, exact: true }).click();
@@ -292,4 +292,45 @@ test("배포 빌드에서 버스 화면과 한국어 표시 글꼴을 불러온�
     /^[1-9]\d*$/,
   );
   expect(errors).toEqual([]);
+});
+
+test("가로·세로 첫 화면에서 실제 차량 전체가 브라우저 가시 영역에 있다", async ({
+  page,
+  isMobile,
+}) => {
+  const sizes = isMobile
+    ? [
+        [390, 900],
+        [900, 390],
+        [340, 780],
+      ]
+    : [[1440, 900]];
+  for (const [width, height] of sizes) {
+    await page.setViewportSize({ width, height });
+    await page.goto("/#bus");
+    await expect(page.locator("#bus-render-status")).toHaveText(
+      "WebGL 렌더링 중",
+    );
+    const canvas = page.locator("#bus-canvas");
+    await boundsInView(canvas);
+    const actual = await canvas.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      const [min, max] = JSON.parse(element.dataset.busProjection ?? "[]");
+      const viewport = window.visualViewport!;
+      return {
+        left: rect.x + ((min[0] + 1) * rect.width) / 2 - viewport.offsetLeft,
+        right: rect.x + ((max[0] + 1) * rect.width) / 2 - viewport.offsetLeft,
+        top: rect.y + ((1 - max[1]) * rect.height) / 2 - viewport.offsetTop,
+        bottom: rect.y + ((1 - min[1]) * rect.height) / 2 - viewport.offsetTop,
+        width: viewport.width,
+        height: viewport.height,
+        scrollY: window.scrollY,
+      };
+    });
+    expect(actual.scrollY).toBe(0);
+    expect(actual.left).toBeGreaterThanOrEqual(0);
+    expect(actual.top).toBeGreaterThanOrEqual(0);
+    expect(actual.right).toBeLessThanOrEqual(actual.width);
+    expect(actual.bottom).toBeLessThanOrEqual(actual.height);
+  }
 });

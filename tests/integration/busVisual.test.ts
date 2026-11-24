@@ -58,13 +58,13 @@ describe("한국형 버스 외형", () => {
       return position;
     });
     const [fl, fr, rlOuter, rlInner, rrOuter, rrInner] = parts;
-    expect(fl.x).toBeLessThan(0);
-    expect(fr.x).toBeGreaterThan(0);
+    expect(fl.x).toBeGreaterThan(0);
+    expect(fr.x).toBeLessThan(0);
     expect(fl.z).toBeCloseTo(frontAxleZ);
     expect(fr.z).toBeCloseTo(frontAxleZ);
     for (const wheel of parts.slice(2)) expect(wheel.z).toBeCloseTo(rearAxleZ);
-    expect(rlInner.x - rlOuter.x).toBeGreaterThan(tireWidth);
-    expect(rrOuter.x - rrInner.x).toBeGreaterThan(tireWidth);
+    expect(rlOuter.x - rlInner.x).toBeGreaterThan(tireWidth);
+    expect(rrInner.x - rrOuter.x).toBeGreaterThan(tireWidth);
     expect(
       new Box3()
         .setFromObject(root.getObjectByName("Roof")!)

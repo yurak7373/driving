@@ -6,13 +6,26 @@ import {
   type BufferGeometry,
   type Material,
 } from "three";
+import { busSides } from "./busAxes";
 import { busConfig, frontAxleZ, rearAxleZ } from "./busConfig";
 import type { BusMaterials } from "./busMaterials";
 
 export function addBusWheels(root: Group, materials: BusMaterials) {
-  const { tireRadius, tireWidth, width } = busConfig;
+  const {
+    tireRadius,
+    tireWidth,
+    tireSidewallBulge,
+    outerWheelInset,
+    dualWheelGap,
+    width,
+  } = busConfig;
   const tire = new CylinderGeometry(tireRadius, tireRadius, tireWidth, 40);
-  const shoulder = new TorusGeometry(tireRadius - 0.035, 0.033, 8, 40);
+  const shoulder = new TorusGeometry(
+    tireRadius - 0.035,
+    tireSidewallBulge,
+    8,
+    40,
+  );
   const rim = new CylinderGeometry(0.267, 0.267, tireWidth + 0.007, 36);
   const hub = new CylinderGeometry(0.112, 0.112, 0.085, 24);
   const lug = new CylinderGeometry(0.021, 0.021, 0.03, 8);
@@ -77,11 +90,8 @@ export function addBusWheels(root: Group, materials: BusMaterials) {
     mesh(axle, "AxleBeam", axleGeometry, materials.dark).rotation.z =
       Math.PI / 2;
   }
-  const outerX = width / 2 - 0.19;
-  for (const [side, label] of [
-    [-1, "L"],
-    [1, "R"],
-  ] as const) {
+  const outerX = width / 2 - outerWheelInset;
+  for (const [side, label] of busSides) {
     const pivot = new Group();
     pivot.name = `Steering_${label}`;
     pivot.position.x = side * outerX;
@@ -92,7 +102,7 @@ export function addBusWheels(root: Group, materials: BusMaterials) {
     wheel(
       rear,
       `Wheel_R${label}_Inner`,
-      side * (outerX - tireWidth - 0.075),
+      side * (outerX - tireWidth - dualWheelGap),
       side,
     );
   }

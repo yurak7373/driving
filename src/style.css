@@ -284,3 +284,27 @@ body:has(.bus-screen:not([hidden])) {
   .bus-stage-route { bottom: 10px; left: 10px; }
   .bus-stage-status { top: 10px; left: 10px; }
 }
+
+/* Keep the complete stage above the fold on low landscape screens. */
+@media (orientation: landscape) and (max-height: 520px) and (min-width: 560px) {
+  .bus-screen:not([hidden]) {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    width: calc(100% - 24px);
+    height: 100svh;
+    padding-block: 8px;
+    gap: 8px;
+  }
+
+  .bus-header { margin-bottom: 0; }
+  .bus-header h1 { font-size: 1.5rem; }
+  .bus-kicker { margin-bottom: 2px; }
+  .bus-workspace {
+    grid-template-columns: minmax(0, 1fr) clamp(205px, 32%, 300px);
+    gap: 10px;
+    align-items: stretch;
+    min-height: 0;
+  }
+  .bus-stage { height: 100%; }
+  .bus-rail { min-height: 0; overflow-y: auto; }
+}

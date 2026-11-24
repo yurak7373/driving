@@ -60,6 +60,8 @@ export function startBusInspection() {
   const subscriptions = new AbortController();
   const { signal } = subscriptions;
   paint.value = preview.livery;
+  steering.min = String(-busConfig.visualSteeringDegrees);
+  steering.max = String(busConfig.visualSteeringDegrees);
   steering.value = rolling.value = "0";
   steeringValue.textContent = rollValue.textContent = "0°";
 

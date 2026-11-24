@@ -1,12 +1,14 @@
 import { Box3, PerspectiveCamera, Vector3 } from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
+import { busForward, busSideX, busUp } from "../vehicles/bus/busAxes";
+
 export const busViews = {
-  diagonal: { label: "사선", direction: [0.87, 0.46, 0.84] },
-  front: { label: "전면", direction: [0, 0.083, 1] },
-  rear: { label: "후면", direction: [0, 0.083, -1] },
-  left: { label: "좌측", direction: [-1, 0.083, 0] },
-  right: { label: "우측", direction: [1, 0.083, 0] },
+  diagonal: { label: "사선", direction: [busSideX.right * 0.87, 0.46, 0.84] },
+  front: { label: "전면", direction: [0, 0.083, busForward[2]] },
+  rear: { label: "후면", direction: [0, 0.083, -busForward[2]] },
+  left: { label: "좌측", direction: [busSideX.left, 0.083, 0] },
+  right: { label: "우측", direction: [busSideX.right, 0.083, 0] },
   top: { label: "상단", direction: [0, 1, 0.001] },
 } as const;
 
@@ -14,6 +16,7 @@ export type BusView = keyof typeof busViews;
 
 export function createBusCamera(canvas: HTMLCanvasElement, bounds: Box3) {
   const camera = new PerspectiveCamera(40, 1, 0.2, 140);
+  camera.up.set(...busUp);
   const controls = new OrbitControls(camera, canvas);
   const size = bounds.getSize(new Vector3());
   const radius = size.length() / 2;
