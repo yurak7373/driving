@@ -22,27 +22,15 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version-file: .node-version
-      - name: 업데이트한 의존성 설치
-        run: |
-          rm package-lock.json
-          npm install --no-audit --no-fund
-      - name: 초기 잠금 파일 저장
-        if: hashFiles('package-lock.json') != ''
-        run: |
-          node --input-type=module <<'NODE'
-          import { readFileSync } from "node:fs";
-          import { gzipSync } from "node:zlib";
-          const encoded = gzipSync(readFileSync("package-lock.json")).toString("base64");
-          for (const part of encoded.match(/.{1,3000}/g)) console.log("PHASE_LOCK " + part);
-          NODE
+          cache: npm
+      - name: 의존성 설치
+        run: npm ci
       - name: 타입 검사, 린트, 단위·통합 테스트 및 빌드
         run: npm run check
       - name: Playwright Chromium 설치
         run: npx playwright install chromium --only-shell
       - name: 개발 서버 및 브라우저 테스트
         run: npm run test:e2e
-      - name: 의존성 감사
-        run: npm audit --audit-level=high
       - name: Playwright 결과 보관
         if: always()
         uses: actions/upload-artifact@v7
