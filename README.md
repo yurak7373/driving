@@ -4,7 +4,7 @@
 
 ## Codespaces에서 열기
 
-1. GitHub 저장소에서 Phase 00 작업 브랜치로 전환합니다. 개발 중에는 작업 브랜치에서 Codespace를 생성하거나 기존 Codespace에서 해당 브랜치로 전환합니다.
+1. GitHub 저장소에서 `phase/00-development-qa` 브랜치로 전환합니다. 이미 Codespace가 있다면 그 안에서 브랜치를 전환할 수 있습니다.
 2. 저장소의 **Code → Codespaces**에서 Codespace를 열고, 파일과 터미널이 나타날 때까지 기다립니다.
 3. 이미 만든 Codespace가 이전 설정으로 만들어졌다면 브랜치를 전환한 뒤 명령 팔레트에서 **Codespaces: Rebuild Container**를 실행합니다.
 4. 터미널에서 `npm run dev`를 실행합니다. 설치가 완료되지 않았다면 아래의 설치 절차를 먼저 실행합니다.
@@ -17,7 +17,7 @@
 Node.js 22 LTS(22.12 이상)와 npm 10 이상을 설치한 뒤, 터미널에서 프로젝트 폴더를 열고 아래 명령을 실행합니다.
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 

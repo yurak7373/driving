@@ -9,5 +9,5 @@
       "requireLocalPort": true
     }
   },
-  "postCreateCommand": "if [ -f package-lock.json ]; then npm ci; else npm install; fi"
+  "postCreateCommand": "npm ci"
 }
