@@ -40,8 +40,8 @@ jobs:
           NODE
       - name: 타입 검사, 린트, 단위·통합 테스트 및 빌드
         run: npm run check
-      - name: Playwright Chromium 및 시스템 패키지 설치
-        run: npx playwright install --with-deps chromium
+      - name: Playwright Chromium 설치
+        run: npx playwright install chromium --only-shell
       - name: 개발 서버 및 브라우저 테스트
         run: npm run test:e2e
       - name: Playwright 결과 보관
